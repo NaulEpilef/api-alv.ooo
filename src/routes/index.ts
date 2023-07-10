@@ -1,9 +1,10 @@
-import { Router } from "express";
+import express from "express";
+import signRoutes from "./sign.routes";
+import targetsRoutes from "./targets.routes";
 
-const routes = Router();
+const app = express();
 
-routes.post("/admin", (req, res) => {
-    res.json({ message: "VRABAPAPTPA" });
-});
+app.use("/", signRoutes);
+app.use("/target", targetsRoutes);
 
-export default routes;
+export default app;
