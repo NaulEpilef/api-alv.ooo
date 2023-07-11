@@ -3,8 +3,15 @@ import { Router } from "express"
 import createTarget from "../services/targets/createTarget";
 import authValidationUser from "../middlewares/authValidationUser";
 import editTarget from "../services/targets/editTarget";
+import listAllTargets from "../services/targets/listAllTargets";
 
 const router = Router();
+
+router.get("/listAll", async (req, res) => {
+	const listTargets = await listAllTargets();
+
+	res.json(listTargets);
+});
 
 router.post("/create", authValidationUser, async (req, res) => {
 	const token = req.headers.authorization?.split(' ')[1] as string;
