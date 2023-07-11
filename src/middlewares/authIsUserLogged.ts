@@ -4,12 +4,18 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
-const authValidationUser = async (req: Request, res: Response, next: NextFunction) => {
+interface IReq extends Request {
+  isLogged: boolean;
+}
+
+const authValidationUser = async (req: IReq, res: Response, next: NextFunction) => {
   try {
     const token = req.headers.authorization?.split(' ')[1]
   
     if (!token) {
-      return res.status(401).json({ message: 'Token não encontrado' });
+      req.body.isLogged = false;
+      next();
+      return;
     }
 
     // Verificar a validade do token JWT

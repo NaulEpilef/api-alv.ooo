@@ -5,14 +5,14 @@ interface ICreatePayloadReq {
 }
 
 interface ICreatePayloadRes {
-  id: string;
+  userId: string;
   username: string;
   email: string;
 }
 
 const convertUserToPayload = ({ user }: ICreatePayloadReq): ICreatePayloadRes => {
   return {
-    id: user.id,
+    userId: user.id,
     email: user.email,
     username: user.username
   }
