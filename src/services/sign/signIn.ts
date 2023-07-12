@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client"
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import convertUserToPayload from "../jwt/convertUserToPayload";
+import ApiError from "../../classes/apiError";
 
 const prisma = new PrismaClient();
 
@@ -22,11 +23,11 @@ const signIn = async ({ email, password }: ISignInReq): Promise<ISignInRes|void>
       }
     });
 
-    if (user == null) throw "Usuário não encontrado";
+    if (user == null) throw new ApiError("User not found.", 400);
 
     const isSamePassword = await bcrypt.compare(password, user.password);
 
-    if (!isSamePassword) throw "A senha está errada";
+    if (!isSamePassword) throw new ApiError("The password is wrong.", 400);
 
     const userPayloadFormat = convertUserToPayload({ user });
 

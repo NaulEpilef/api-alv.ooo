@@ -3,6 +3,7 @@ import { v4 } from "uuid";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import convertUserToPayload from "../jwt/convertUserToPayload";
+import ApiError from "../../classes/apiError";
 
 const prisma = new PrismaClient();
 
@@ -18,53 +19,47 @@ interface ISignUpRes {
 }
 
 const signUp = async ({ email, username, password, confirmPassword }: ISignUpReq): Promise<ISignUpRes|void> => {
-	try {
-    if (password != confirmPassword) throw "As senhas não são iguais";
+  if (password != confirmPassword) throw new ApiError("The passwords are differents.", 400);
 
-    const user = await prisma.users.findFirst({
-      where: {
-        OR: [
-          {
-            username,
-          }, {
-            email
-          }
-        ]
-      }
-    });
-
-    if (user != null) {
-      if (user.username == username) throw "Nome de usuário já existe";
-      if (user.email == email) throw "E-mail já existe";
-      throw "Algo deu errado";
+  const user = await prisma.users.findFirst({
+    where: {
+      OR: [
+        {
+          username,
+        }, {
+          email,
+        }
+      ]
     }
+  });
 
-    const salt =  await bcrypt.genSalt(10);
-    const passwordHashed = await bcrypt.hash(password, salt);
+  if (user != null) {
+    if (user.username == username) throw new ApiError("Username already exists.", 400);
+    if (user.email == email) throw new ApiError("Email already in use.", 400);
+    throw new ApiError("Something went wrong.", 400);
+  }
 
-		const createdUser = await prisma.users.create({
-			data: {
-        id: v4(),
-				email,
-				username: username.toLowerCase(),
-				password: passwordHashed
-			}
-		});
+  const salt =  await bcrypt.genSalt(10);
+  const passwordHashed = await bcrypt.hash(password, salt);
 
-    const userPayloadFormat = convertUserToPayload({ user: createdUser });
+  const createdUser = await prisma.users.create({
+    data: {
+      id: v4(),
+      email,
+      username: username.toLowerCase(),
+      password: passwordHashed
+    }
+  });
 
-    const secret = process.env.JWT_SECRET as jwt.Secret;
-    const token = jwt.sign(userPayloadFormat, secret, {
-      expiresIn: 60000
-    })
+  const userPayloadFormat = convertUserToPayload({ user: createdUser });
 
-		prisma.$disconnect;
+  const secret = process.env.JWT_SECRET as jwt.Secret;
+  const token = jwt.sign(userPayloadFormat, secret, {
+    expiresIn: 60000
+  })
 
-		return { token };
-	} catch (err) {
-		console.error(err);
-		prisma.$disconnect;
-	}
+  prisma.$disconnect;
+  return { token };
 }
 
 export default signUp;

@@ -1,5 +1,6 @@
 import { PrismaClient, Targets } from "@prisma/client";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import ApiError from "../../classes/apiError";
 
 const prisma = new PrismaClient();
 
@@ -23,7 +24,7 @@ const editTarget = async ({ targetId, isPrivate, title, token }: IEditTarget): P
       }
     });
 
-    if (target == null) throw "The user is not the owner of this target";
+    if (target == null) throw new ApiError("The user is not the owner of this target", 400);
 
     const targetEdited = await prisma.targets.update({
       data: {
