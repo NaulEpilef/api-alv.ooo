@@ -1,7 +1,6 @@
 import { Router } from "express"
 import signUp from "../services/sign/signUp";
 import signIn from "../services/sign/signIn";
-import errorHandler from "../middlewares/errorHandler";
 
 const router = Router();
 
