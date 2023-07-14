@@ -1,10 +1,23 @@
-import { PrismaClient, Targets } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+import { ITargetListAll } from "../../interfaces/targets";
 
 const prisma = new PrismaClient();
 
-const listAllTargets = async (): Promise<Targets[]|void> => {
+const listAllTargets = async (): Promise<ITargetListAll[]|void> => {
   try {
     const listTargets = await prisma.targets.findMany({
+      select: {
+        id: true,
+        title: true,
+        userId: true,
+        isCompleted: true,
+        isPrivate: true,
+        user: {
+          select: {
+            username: true
+          }
+        }
+      },
       where: {
         isPrivate: false
       }

@@ -18,6 +18,8 @@ model Users {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   target    Targets[]
+
+  @@map("users")
 }
 
 model Targets {
@@ -31,4 +33,5 @@ model Targets {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  @@map("targets")
 }

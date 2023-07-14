@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 const authValidationUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.headers.authorization?.split(' ')[1]
+    req.body.isLogged = true;
   
     if (!token) {
       return res.status(401).json({ message: 'Token não encontrado' });
@@ -26,11 +27,12 @@ const authValidationUser = async (req: Request, res: Response, next: NextFunctio
     if (user == null) throw { message: "Usuário não existe, por favor, faça login novamente" };
 
     // Incrementar o tempo de validação
-    const updatedToken = jwt.sign({ ...decodedToken, exp: 60000}, secret);
+    const updatedToken = jwt.sign({ ...decodedToken, exp: 600000}, secret);
 
     // Adicionar o token atualizado à resposta
     res.setHeader('Authorization', `Bearer ${updatedToken}`);
-    
+    req.body.currentUser = user;
+
     next();
   } catch (err) {
     console.error(err);

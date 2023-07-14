@@ -4,14 +4,11 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
-interface IReq extends Request {
-  isLogged: boolean;
-}
-
-const authValidationUser = async (req: IReq, res: Response, next: NextFunction) => {
+const authIsUserLogged = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.headers.authorization?.split(' ')[1]
-  
+    req.body.isLogged = true;
+
     if (!token) {
       req.body.isLogged = false;
       next();
@@ -36,6 +33,7 @@ const authValidationUser = async (req: IReq, res: Response, next: NextFunction) 
 
     // Adicionar o token atualizado à resposta
     res.setHeader('Authorization', `Bearer ${updatedToken}`);
+    req.body.currentUser = user;
     
     next();
   } catch (err) {
@@ -44,4 +42,4 @@ const authValidationUser = async (req: IReq, res: Response, next: NextFunction) 
   }
 }
 
-export default authValidationUser;
+export default authIsUserLogged;
