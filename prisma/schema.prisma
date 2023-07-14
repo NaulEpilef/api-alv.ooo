@@ -11,18 +11,20 @@ datasource db {
 }
 
 model Users {
-  id        Int @id @default(autoincrement())
+  id        String @id @default(uuid())
   username  String @unique
   email     String @unique
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   target    Targets[]
+
+  @@map("users")
 }
 
 model Targets {
-  id          Int @id @default(autoincrement())
-  userId      Int
+  id          String @id @default(uuid())
+  userId      String
   user        Users @relation(fields: [userId], references: [id])
   title       String
   isCompleted Boolean @default(false)
@@ -31,4 +33,5 @@ model Targets {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  @@map("targets")
 }
