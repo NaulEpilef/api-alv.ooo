@@ -20,7 +20,7 @@ const signUpSchema = joi.object({
     .max(30)
     .required(),
   username: joi.string()
-    .pattern(/^[a-zA-Z]{2,30}$/)
+    .pattern(/^[a-zA-Z_]{2,30}$/)
     .min(2)
     .max(30)
     .required(),
