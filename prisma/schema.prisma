@@ -28,7 +28,7 @@ model Targets {
   user        Users @relation(fields: [userId], references: [id])
   title       String
   isCompleted Boolean @default(false)
-  isPrivate   Boolean
+  isPrivate   Boolean @default(false)
   isDeleted   Boolean @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
