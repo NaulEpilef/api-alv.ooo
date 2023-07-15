@@ -24,13 +24,17 @@ router.get("/:username", authIsUserLogged, async (req, res) => {
 	res.json(userTargets);
 });
 
-router.post("/create", authValidationUser, async (req, res) => {
+router.post("/create", authValidationUser, async (req, res, next) => {
 	const token = req.headers.authorization?.split(' ')[1] as string;
 	const { title, isPrivate } = req.body;
 
-	const target = await createTarget({ token, title, isPrivate });
-
-	res.json(target);
+	try {
+		const target = await createTarget({ token, title, isPrivate });
+	
+		res.json(target);
+	} catch (err) {
+		next(err);
+	}
 });
 
 
