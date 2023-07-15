@@ -17,13 +17,17 @@ router.post("/signup", async (req, res, next) => {
 	}
 });
 
-router.post("/signin", async (req, res) => {
+router.post("/signin", async (req, res, next) => {
 	const { email, password } = req.body;
 
-	const token = await signIn({ email, password });
-
-	res.setHeader('Authorization', `Bearer ${token}`);
-	res.json(token);
+	try {
+		const token = await signIn({ email, password });
+	
+		res.setHeader('Authorization', `Bearer ${token}`);
+		res.json(token);
+	} catch (err) {
+		next(err);
+	}
 });
 
 export default router;
