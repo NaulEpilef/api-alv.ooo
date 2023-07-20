@@ -28,7 +28,7 @@ const signIn = async ({ email, password }: ISignInReq): Promise<ISignInRes|void>
       throw new ApiError("'email' must be a valid email.", 400);
   
     if (signInValidation.error.details.filter(detail => detail.path.includes("password")).length > 0)
-      throw new ApiError("'password' must be a valid email.", 400);
+      throw new ApiError("'password' must be a valid password.", 400);
   }
 
   const user = await prisma.users.findFirst({
