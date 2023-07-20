@@ -3,6 +3,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 import { createTargetSchema } from "../../validations/targetValidation";
 import ApiError from "../../classes/apiError";
+import { ISuccessResponse } from "../../interfaces/error";
 
 const prisma = new PrismaClient();
 
@@ -12,7 +13,7 @@ interface ICreateTargetReq {
   isPrivate: boolean;
 }
 
-const createTarget = async ({ token, title, isPrivate }: ICreateTargetReq): Promise<Targets|void> => {
+const createTarget = async ({ token, title, isPrivate }: ICreateTargetReq): Promise<ISuccessResponse<null>|void> => {
 	const createTargetValidation = createTargetSchema.validate({ title, isPrivate });
 
 	if (createTargetValidation === undefined)
@@ -29,7 +30,7 @@ const createTarget = async ({ token, title, isPrivate }: ICreateTargetReq): Prom
 	const secret = process.env.JWT_SECRET as jwt.Secret;
 	const decodedToken = jwt.verify(token, secret) as JwtPayload;
 
-	const target = await prisma.targets.create({
+	await prisma.targets.create({
 		data: {
 			userId: decodedToken.userId,
 			isPrivate,
@@ -38,7 +39,7 @@ const createTarget = async ({ token, title, isPrivate }: ICreateTargetReq): Prom
 	});
 
 	prisma.$disconnect;
-	return target;
+	return { status: "success", data: null };
 }
 
 export default createTarget;
