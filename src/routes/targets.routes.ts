@@ -38,13 +38,17 @@ router.post("/create", authValidationUser, async (req, res, next) => {
 });
 
 
-router.put("/edit", authValidationUser, async (req, res) => {
+router.put("/edit", authValidationUser, async (req, res, next) => {
 	const token = req.headers.authorization?.split(' ')[1] as string;
 	const { targetId, title, isPrivate } = req.body;
 
-	const target = await editTarget({ targetId, token, title, isPrivate });
-
-	res.json(target);
+	try {
+		const target = await editTarget({ targetId, token, title, isPrivate });
+	
+		res.json(target);
+	} catch (err) {
+		next(err);
+	}
 });
 
 export default router;
