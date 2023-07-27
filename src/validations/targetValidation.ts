@@ -22,4 +22,14 @@ const editTargetSchema = joi.object({
     .required(),
 });
 
-export { createTargetSchema, editTargetSchema };
+const toggleCompleteTargetSchema = joi.object({
+  targetId: joi.string()
+    .max(300)
+    .guid()
+    .required(),
+  isCompleted: joi.boolean()
+    .strict()
+    .required(),
+});
+
+export { createTargetSchema, editTargetSchema, toggleCompleteTargetSchema };

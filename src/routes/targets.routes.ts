@@ -6,6 +6,7 @@ import editTarget from "../services/targets/editTarget";
 import listAllTargets from "../services/targets/listAllTargets";
 import listUserTargets from "../services/targets/listUserTargets";
 import authIsUserLogged from "../middlewares/authIsUserLogged";
+import toggleCompleteTarget from "../services/targets/toggleCompleteTarget";
 
 const router = Router();
 
@@ -44,6 +45,20 @@ router.put("/edit", authValidationUser, async (req, res, next) => {
 
 	try {
 		const target = await editTarget({ targetId, token, title, isPrivate });
+	
+		res.json(target);
+	} catch (err) {
+		next(err);
+	}
+});
+
+
+router.put("/toggle", authValidationUser, async (req, res, next) => {
+	const token = req.headers.authorization?.split(' ')[1] as string;
+	const { targetId, isCompleted } = req.body;
+
+	try {
+		const target = await toggleCompleteTarget({ targetId, token, isCompleted });
 	
 		res.json(target);
 	} catch (err) {

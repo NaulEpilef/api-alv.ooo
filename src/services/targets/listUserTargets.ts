@@ -38,6 +38,9 @@ const listUserTargets = async ({ currentUser, username, isLogged }: IListUserTar
             },
           ],
         }
+      },
+      orderBy: {
+        title: "asc"
       }
     });
 
